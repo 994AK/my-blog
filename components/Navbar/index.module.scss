@@ -1,0 +1,29 @@
+.navbar {
+  display: flex;
+  height: 60px;
+  background: #fff;
+  //justify-content: center;
+  align-items: center;
+
+  .logArea {
+    //flex: 1;
+    font-size: 21px;
+    padding-left: 10px;
+  }
+
+  .linkArea {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    font-size: 18px;
+    a {
+      padding-left: 30px;
+      color: #ccc;
+    }
+
+    .active {
+      color: #1890ff;
+    }
+  }
+}
+
