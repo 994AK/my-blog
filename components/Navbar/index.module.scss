@@ -6,9 +6,8 @@
   align-items: center;
 
   .logArea {
-    //flex: 1;
     font-size: 21px;
-    padding-left: 10px;
+    padding-left: 20px;
   }
 
   .linkArea {
@@ -24,6 +23,9 @@
     .active {
       color: #1890ff;
     }
+  }
+  .operationArea {
+    padding-right: 20px;
   }
 }
 
