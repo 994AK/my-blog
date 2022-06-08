@@ -1,6 +1,7 @@
-import { Modal, Form, Input, Button, Col, Row } from 'antd';
+import { Modal, Form, Input, Button, Col, Row, message } from 'antd';
 import { useState } from 'react';
 import CountDown from 'components/CountDown';
+import request from 'service/fetch';
 
 interface IProps {
   isShow: boolean;
@@ -8,12 +9,7 @@ interface IProps {
 }
 
 const Login = ({ isShow = false, onClose }: IProps) => {
-  const [form, setForm] = useState({
-    phone: '',
-    codeName: '',
-  });
-
-  console.log(setForm, 111);
+  const [form] = Form.useForm();
 
   const [isShowCode, setIsShowCode] = useState(false);
 
@@ -23,7 +19,20 @@ const Login = ({ isShow = false, onClose }: IProps) => {
   };
 
   const onGetCode = () => {
-    setIsShowCode(true);
+    form
+      .validateFields(['phone'])
+      .then(({ phone }) => {
+        request
+          .post('/api/user/sendVerifyCode', {
+            to: phone,
+            templateId: 1,
+          })
+          .then((r) => {
+            console.log(r);
+            setIsShowCode(true);
+          });
+      })
+      .catch(() => message.error('请输入手机号码'));
   };
 
   const onFinish = (values: any) => {
@@ -33,6 +42,7 @@ const Login = ({ isShow = false, onClose }: IProps) => {
   return isShow ? (
     <Modal title='登陆窗口' visible={isShow} onCancel={onClose} footer={null}>
       <Form
+        form={form}
         name='basic'
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
@@ -42,8 +52,17 @@ const Login = ({ isShow = false, onClose }: IProps) => {
         <Form.Item
           label='手机号'
           name='phone'
-          rules={[{ required: true, message: '请输入手机号码' }]}>
-          <Input value={form.phone} />
+          validateTrigger='onBlur'
+          rules={[
+            {
+              required: true,
+              pattern: new RegExp(
+                /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/,
+              ),
+              message: '请输入手机号码',
+            },
+          ]}>
+          <Input />
         </Form.Item>
 
         <Form.Item
@@ -52,7 +71,7 @@ const Login = ({ isShow = false, onClose }: IProps) => {
           rules={[{ required: true, message: '请输入验证吗' }]}>
           <Row gutter={16}>
             <Col flex={1}>
-              <Input value={form.codeName} />
+              <Input />
             </Col>
             <Col>
               <Button type='primary' onClick={onGetCode}>
